@@ -11,39 +11,56 @@ use yii\web\HttpException;
 class Module extends \kouosl\base\Module
 {
     public $controllerNamespace = '';
-
-    public function init()
+ public function init()
     {
         parent::init();
+         // custom initialization code goes here
     }
-    public function registerTranslations()
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        switch ($this->namespace)
+        {
+            case 'backend':{
+             };break;
+            case 'frontend':{
+             };break;
+            case 'api':{
+                 $behaviors['authenticator'] = [
+                    'class' => CompositeAuth::className(),
+                    'authMethods' => [
+                        HttpBasicAuth::className(),
+                        HttpBearerAuth::className(),
+                        QueryParamAuth::className(),
+                    ],
+                ];
+            };break;
+            case 'console':{
+             };break;
+            default:{
+                throw new HttpException(500,'behaviors'.$this->namespace);
+            };break;
+        }
+         return $behaviors;
+     }
+     public function registerTranslations()
     {
         Yii::$app->i18n->translations['site/*'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'sourceLanguage' => 'en-US',
-            'basePath' => '@kouosl/sample/messages',
-            'fileMap' => [
-                'sample/sample' => 'sample.php',
+@@ -63,7 +27,6 @@ public function registerTranslations()
             ],
         ];
     }
-    public static function t($category, $message, $params = [], $language = null)
+     public static function t($category, $message, $params = [], $language = null)
     {
         return Yii::t('sample/' . $category, $message, $params, $language);
-    }
-
-    public static function initRules(){
-
-        return $rules = [
-            [
-                'class' => 'yii\rest\UrlRule',
-                'controller' => [
-                    'sample/samples',
-                ],
+@@ -80,15 +43,7 @@ public static function initRules(){
                 'tokens' => [
                     '{id}' => '<id:\\w+>'
                 ],
+                /*'patterns' => [
+                    'GET new-action' => 'new-action'
+                ]*/
             ],
-        ] ;
-    }
-}
+         ] ;
+     }
+ }
