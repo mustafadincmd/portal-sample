@@ -16,6 +16,7 @@ class Module extends \kouosl\base\Module
     {
         parent::init();
     }
+    
     public function registerTranslations()
     {
         Yii::$app->i18n->translations['site/*'] = [
@@ -27,10 +28,12 @@ class Module extends \kouosl\base\Module
             ],
         ];
     }
+    
     public static function t($category, $message, $params = [], $language = null)
     {
         return Yii::t('sample/' . $category, $message, $params, $language);
     }
+    
     public static function initRules(){
 
         return $rules = [
